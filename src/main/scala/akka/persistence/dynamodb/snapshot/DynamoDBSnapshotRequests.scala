@@ -36,11 +36,10 @@ trait DynamoDBSnapshotRequests extends DynamoDBRequests {
 
   def delete(persistenceId: String, criteria: SnapshotSelectionCriteria): Future[Unit] = {
     loadQueryResult(persistenceId, criteria).flatMap { queryResult =>
-      val result = queryResult.getItems.asScala.map(item => item.get(SequenceNr).getN.toLong)
+      val result = queryResult.getItems.asScala.map(item => item.get(SequenceNr).getN.toLong).toSeq
       doBatch(
         batch => s"execute batch delete $batch",
-        result.map(snapshotDeleteReq(persistenceId, _))
-      )
+        result.map(snapshotDeleteReq(persistenceId, _)))
         .map(toUnit)
     }
   }
@@ -179,8 +178,7 @@ trait DynamoDBSnapshotRequests extends DynamoDBRequests {
           }
         case _ =>
           Future.successful(
-            serialization.deserialize(payloadData.array(), serId, manifest).get
-          )
+            serialization.deserialize(payloadData.array(), serId, manifest).get)
       }
 
       serialized.map(data => SelectedSnapshot(metadata = SnapshotMetadata(persistenceId, sequenceNr = seqNr, timestamp = timestamp), snapshot = data))
@@ -190,9 +188,7 @@ trait DynamoDBSnapshotRequests extends DynamoDBRequests {
       Future.successful(
         SelectedSnapshot(
           metadata = SnapshotMetadata(persistenceId, sequenceNr = seqNr, timestamp = timestamp),
-          snapshot = serialization.deserialize(payloadValue.array(), classOf[Snapshot]).get.data
-        )
-      )
+          snapshot = serialization.deserialize(payloadValue.array(), classOf[Snapshot]).get.data))
     }
   }
 
