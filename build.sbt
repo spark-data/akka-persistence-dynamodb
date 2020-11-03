@@ -24,20 +24,3 @@ parallelExecution in Test := false
 logBuffered := false
 testOptions in Test += Tests.Argument(TestFrameworks.ScalaTest, "-oDF")
 
-import com.typesafe.sbt.SbtScalariform
-import com.typesafe.sbt.SbtScalariform.ScalariformKeys
-
-SbtScalariform.scalariformSettings
-ScalariformKeys.preferences in Compile  := formattingPreferences
-ScalariformKeys.preferences in Test     := formattingPreferences
-
-def formattingPreferences = {
-  import scalariform.formatter.preferences._
-  FormattingPreferences()
-    .setPreference(RewriteArrowSymbols, false)
-    .setPreference(AlignParameters, true)
-    .setPreference(AlignSingleLineCaseStatements, true)
-    .setPreference(SpacesAroundMultiImports, true)
-    .setPreference(DoubleIndentClassDeclaration, true)
-    .setPreference(AlignArguments, true)
-}
